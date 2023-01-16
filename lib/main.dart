@@ -1,19 +1,28 @@
 import 'package:bread/services/settings/settings_controller.dart';
 import 'package:bread/services/settings/settings_service.dart';
+import 'package:bread/services/tasks/task_controller.dart';
+import 'package:bread/services/tasks/tasks_service.dart';
 import 'package:bread/views/bread_main_view.dart';
 import 'package:flutter/material.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   final SettingsController settingsController =
       SettingsController(settingsService: SharedPreferencesSettingsService());
 
   await settingsController.loadSettings();
 
-  runApp(BreadApp(settingsController: settingsController));
+  runApp(BreadApp(
+    settingsController: settingsController,
+  ));
 }
 
 class BreadApp extends StatelessWidget {
-  const BreadApp({super.key, required this.settingsController});
+  const BreadApp({
+    super.key,
+    required this.settingsController,
+  });
 
   final SettingsController settingsController;
 
