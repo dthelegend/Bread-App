@@ -1,7 +1,5 @@
 import 'package:bread/services/settings/settings_controller.dart';
 import 'package:bread/services/settings/settings_service.dart';
-import 'package:bread/services/tasks/task_controller.dart';
-import 'package:bread/services/tasks/tasks_service.dart';
 import 'package:bread/views/bread_main_view.dart';
 import 'package:flutter/material.dart';
 

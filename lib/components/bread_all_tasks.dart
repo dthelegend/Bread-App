@@ -38,7 +38,11 @@ class AllTasks extends StatelessWidget implements BreadMainViewTab {
                 return AllTaskItem(
                   key: Key("TaskItem_${task.id}"),
                   task: task,
-                  onRemove: onRemove,
+                  onRemove: (task) {
+                    onRemove(task);
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text("Removed ${task.description}")));
+                  },
                   onUpdate: onUpdate,
                   onBread: onUpdate,
                 );
@@ -57,7 +61,7 @@ class AllTasks extends StatelessWidget implements BreadMainViewTab {
         dateCreated: DateTime.now(),
         dateLastModified: DateTime.now(),
         dueDate: DateTime.now(),
-        description: "Item",
+        description: "",
         isCompleted: false,
         breaded: false);
     taskController.addTask(propTask);
@@ -134,6 +138,7 @@ class AllTaskItemState extends State<AllTaskItem> {
       case DismissDirection.startToEnd:
         return Container(
           color: Colors.red,
+          padding: const EdgeInsets.only(left: 8.0),
           alignment: Alignment.centerLeft,
           child: const Icon(Icons.remove),
         );
@@ -141,6 +146,7 @@ class AllTaskItemState extends State<AllTaskItem> {
         return Container(
           color: Colors.green,
           alignment: Alignment.centerRight,
+          padding: const EdgeInsets.only(right: 8.0),
           child: const Icon(Icons.breakfast_dining),
         );
       default:
@@ -168,10 +174,11 @@ class AllTaskItemState extends State<AllTaskItem> {
         title: TextField(
           controller: _controller,
           decoration: const InputDecoration(
-              border: InputBorder.none, hintText: "Let's do something"),
+              border: InputBorder.none, hintText: "Let's get that bread"),
           onChanged: onUpdateText,
         ),
-        trailing: widget.task.breaded ? const Icon(Icons.breakfast_dining) : null,
+        trailing:
+            widget.task.breaded ? const Icon(Icons.breakfast_dining) : null,
       ),
     );
   }

@@ -70,6 +70,7 @@ abstract class TaskService {
       int limit});
   Future<TaskItem> updateTask(TaskItem item);
   Future<void> removeTask(int id);
+  Future<void> unbreadTasks();
 }
 
 class SQLiteTaskService extends TaskService {
@@ -97,8 +98,8 @@ class SQLiteTaskService extends TaskService {
     assert(item.id == null);
 
     item.id = await db.insert("tasks", {
-      "breaded": item.breaded,
-      "is_completed": item.isCompleted,
+      "breaded": item.breaded ? 1 : 0,
+      "is_completed": item.isCompleted ? 1 : 0,
       "description": item.description,
       "due_date": item.dueDate.millisecondsSinceEpoch,
       "date_last_modified": item.dateLastModified.millisecondsSinceEpoch,
@@ -196,9 +197,12 @@ class SQLiteTaskService extends TaskService {
     );
 
     return result.map((taskMap) => TaskItem(
-          dateCreated: DateTime.fromMillisecondsSinceEpoch(taskMap["date_created"] as int) ,
-          dateLastModified: DateTime.fromMillisecondsSinceEpoch(taskMap["date_last_modified"] as int),
-          dueDate: DateTime.fromMillisecondsSinceEpoch(taskMap["due_date"] as int),
+          dateCreated: DateTime.fromMillisecondsSinceEpoch(
+              taskMap["date_created"] as int),
+          dateLastModified: DateTime.fromMillisecondsSinceEpoch(
+              taskMap["date_last_modified"] as int),
+          dueDate:
+              DateTime.fromMillisecondsSinceEpoch(taskMap["due_date"] as int),
           description: taskMap["description"] as String,
           isCompleted: (taskMap["is_completed"] as int) != 0,
           breaded: (taskMap["breaded"] as int) != 0,
@@ -222,16 +226,29 @@ class SQLiteTaskService extends TaskService {
     await db.update(
         "tasks",
         {
-          "is_completed": item.isCompleted,
+          "is_completed": item.isCompleted ? 1 : 0,
           "description": item.description,
           "due_date": item.dueDate.millisecondsSinceEpoch,
           "date_last_modified": item.dateLastModified.millisecondsSinceEpoch,
           "date_created": item.dateCreated.millisecondsSinceEpoch,
-          "breaded": item.breaded,
+          "breaded": item.breaded ? 1 : 0,
         },
         where: "id = ?",
         whereArgs: [item.id]);
 
     return item;
+  }
+
+  @override
+  Future<void> unbreadTasks() async {
+    final db = await database;
+
+    await db.delete("tasks",
+        where: "breaded = ? AND is_completed = ?", whereArgs: [1, 1]);
+
+    await db.update("tasks", {
+      "breaded": 0,
+      "is_completed": 0,
+    });
   }
 }

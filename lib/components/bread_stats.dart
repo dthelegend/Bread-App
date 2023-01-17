@@ -9,36 +9,37 @@ class Stats extends StatelessWidget implements BreadMainViewTab {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text("Theme"),
-            DropdownButton(
-              value: settingsController.theme,
-              items: ThemeMode.values
-                  .map((theme) => DropdownMenuItem(
-                        value: theme,
-                        child: Text(theme.name),
-                      ))
-                  .toList(),
-              onChanged: settingsController.setTheme,
-            )
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text("Hints"),
-            Switch(
-                value: settingsController.hintState,
-                onChanged: settingsController.setHintState)
-          ],
-        ),
-      ],
-    );
+    return const Center(child: Text("Coming soon!"),);
+    // return Column(
+    //   crossAxisAlignment: CrossAxisAlignment.stretch,
+    //   children: [
+    //     Row(
+    //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //       children: [
+    //         const Text("Theme"),
+    //         DropdownButton(
+    //           value: settingsController.theme,
+    //           items: ThemeMode.values
+    //               .map((theme) => DropdownMenuItem(
+    //                     value: theme,
+    //                     child: Text(theme.name),
+    //                   ))
+    //               .toList(),
+    //           onChanged: settingsController.setTheme,
+    //         )
+    //       ],
+    //     ),
+    //     Row(
+    //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //       children: [
+    //         const Text("Hints"),
+    //         Switch(
+    //             value: settingsController.hintState,
+    //             onChanged: settingsController.setHintState)
+    //       ],
+    //     ),
+    //   ],
+    // );
   }
 
   @override
