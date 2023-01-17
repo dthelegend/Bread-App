@@ -61,14 +61,14 @@ class TaskFilter {
 }
 
 abstract class TaskService {
-  Future<void> addTask(TaskItem item);
+  Future<TaskItem> addTask(TaskItem item);
   Future<Iterable<TaskItem>> getTasks(
       {TaskFilter? filter,
       TaskOrderBy orderby,
       TaskOrder order,
       int page,
       int limit});
-  Future<void> updateTask(TaskItem item);
+  Future<TaskItem> updateTask(TaskItem item);
   Future<void> removeTask(int id);
 }
 
@@ -91,19 +91,21 @@ class SQLiteTaskService extends TaskService {
       ))();
 
   @override
-  Future<void> addTask(TaskItem item) async {
+  Future<TaskItem> addTask(TaskItem item) async {
     final db = await database;
 
-    if (item.id != null) return;
+    assert(item.id == null);
 
-    db.insert("tasks", {
+    item.id = await db.insert("tasks", {
       "breaded": item.breaded,
       "is_completed": item.isCompleted,
       "description": item.description,
-      "due_date": item.dueDate,
-      "date_last_modified": item.dateLastModified,
-      "date_created": item.dateCreated,
+      "due_date": item.dueDate.millisecondsSinceEpoch,
+      "date_last_modified": item.dateLastModified.millisecondsSinceEpoch,
+      "date_created": item.dateCreated.millisecondsSinceEpoch,
     });
+
+    return item;
   }
 
   @override
@@ -194,13 +196,13 @@ class SQLiteTaskService extends TaskService {
     );
 
     return result.map((taskMap) => TaskItem(
-          dateCreated: taskMap["date_created"] as DateTime,
-          dateLastModified: taskMap["date_last_modified"] as DateTime,
-          dueDate: taskMap["due_date"] as DateTime,
+          dateCreated: DateTime.fromMillisecondsSinceEpoch(taskMap["date_created"] as int) ,
+          dateLastModified: DateTime.fromMillisecondsSinceEpoch(taskMap["date_last_modified"] as int),
+          dueDate: DateTime.fromMillisecondsSinceEpoch(taskMap["due_date"] as int),
           description: taskMap["description"] as String,
-          isCompleted: taskMap["is_completed"] as bool,
-          breaded: taskMap["breaded"] as bool,
-          id: taskMap["id"] as int?,
+          isCompleted: (taskMap["is_completed"] as int) != 0,
+          breaded: (taskMap["breaded"] as int) != 0,
+          id: taskMap["id"] as int,
         ));
   }
 
@@ -212,22 +214,24 @@ class SQLiteTaskService extends TaskService {
   }
 
   @override
-  Future<void> updateTask(TaskItem item) async {
+  Future<TaskItem> updateTask(TaskItem item) async {
     final db = await database;
 
-    if (item.id == null) return;
+    assert(item.id != null);
 
-    db.update(
+    await db.update(
         "tasks",
         {
           "is_completed": item.isCompleted,
           "description": item.description,
-          "due_date": item.dueDate,
-          "date_last_modified": item.dateLastModified,
-          "date_created": item.dateCreated,
+          "due_date": item.dueDate.millisecondsSinceEpoch,
+          "date_last_modified": item.dateLastModified.millisecondsSinceEpoch,
+          "date_created": item.dateCreated.millisecondsSinceEpoch,
           "breaded": item.breaded,
         },
         where: "id = ?",
         whereArgs: [item.id]);
+
+    return item;
   }
 }

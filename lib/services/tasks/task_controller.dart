@@ -23,16 +23,40 @@ class TaskController extends ChangeNotifier {
     _tasks = [];
     _allTasksLoaded = false;
     _page = 0;
-    
+
     notifyListeners();
   }
 
   Future<void> loadMoreTasks() async {
     final newTasks = await taskService.getTasks(
-        filter: filter, page: ++_page, order: order, orderby: orderby);
+        filter: filter, page: _page++, order: order, orderby: orderby);
     _allTasksLoaded = newTasks.length < limit;
 
     _tasks.addAll(newTasks);
+
+    notifyListeners();
+  }
+
+  Future<void> addTask(TaskItem task) async {
+    final newTask = await taskService.addTask(task);
+
+    _tasks.add(newTask);
+
+    notifyListeners();
+  }
+
+  Future<void> updateTask(TaskItem task) async {
+    await taskService.updateTask(task);
+
+    notifyListeners();
+  }
+
+  Future<void> removeTask(TaskItem task) async {
+    if (task.id == null) return;
+
+    _tasks.remove(task);
+
+    await taskService.removeTask(task.id!);
 
     notifyListeners();
   }

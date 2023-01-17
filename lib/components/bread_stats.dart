@@ -1,8 +1,9 @@
+import 'package:bread/components/bread_main_view_tab.dart';
 import 'package:bread/services/settings/settings_controller.dart';
 import 'package:flutter/material.dart';
 
-class Options extends StatelessWidget {
-  const Options({super.key, required this.settingsController});
+class Stats extends StatelessWidget implements BreadMainViewTab {
+  const Stats({super.key, required this.settingsController});
 
   final SettingsController settingsController;
 
@@ -39,4 +40,13 @@ class Options extends StatelessWidget {
       ],
     );
   }
+
+  @override
+  Widget? get floatingActionButton => null;
+
+  @override
+  Icon get icon => const Icon(Icons.line_axis);
+
+  @override
+  String get label => "Stats";
 }

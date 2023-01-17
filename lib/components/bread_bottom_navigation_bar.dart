@@ -1,14 +1,25 @@
+import 'package:bread/components/bread_main_view_tab.dart';
 import 'package:flutter/material.dart';
 
-class BreadBottomNavigationBar extends BottomNavigationBar {
-  BreadBottomNavigationBar({
+class BreadBottomNavigationBar extends StatelessWidget {
+  const BreadBottomNavigationBar({
     super.key,
-    super.currentIndex,
-    super.onTap,
-    super.items = const [
-      BottomNavigationBarItem(icon: Icon(Icons.all_inclusive), label: "All Tasks"),
-      BottomNavigationBarItem(icon: Icon(Icons.breakfast_dining), label: "Today's Bread"),
-      BottomNavigationBarItem(icon: Icon(Icons.timelapse), label: "Options"),
-    ],
+    this.currentIndex = 0,
+    this.onTap,
+    required this.tabs,
   });
+
+  final int currentIndex;
+  final void Function(int)? onTap;
+  final List<BreadMainViewTab> tabs;
+
+  @override
+  Widget build(BuildContext context) => BottomNavigationBar(
+      currentIndex: currentIndex,
+      onTap: onTap,
+      items: tabs
+          .map((tab) =>
+              BottomNavigationBarItem(icon: tab.icon, label: tab.label))
+          .toList(),
+    );
 }
